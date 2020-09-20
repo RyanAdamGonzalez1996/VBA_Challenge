@@ -3,22 +3,17 @@ Sub SummarizeStocks()
 
 'Declare Variables
     Dim ticker As String
-    Dim currentDate As Integer
-    Dim currentOpen As Double
-    Dim currentHigh As Double
-    Dim currentLow As Double
-    Dim currentClose As Double
     Dim initialOpen As Double
     Dim finalClose As Double
     Dim total As Double
     Dim percentChange As Double
     Dim yearlyChange As Double
-    
     Dim maxRow As Long
     Dim summaryRow As Integer
     
 'Get the Max Row to automaticall adjust loop for sheet size
     maxRow = ActiveSheet.UsedRange.Rows.Count
+    
 'Set the Summary Row to start where the summary reports will begin
     summaryRow = 2
     total = 0
@@ -56,6 +51,8 @@ Sub SummarizeStocks()
                 percentChange = yearlyChange / initialOpen
                 Cells(summaryRow, 10).Value = yearlyChange
                 Cells(summaryRow, 11).Value = percentChange
+                'Format the percent Change cells into a 0.00% setup
+                Cells(summaryRow, 11).NumberFormat = "0.00%"
                 
             'Fill the cell for yearly change either green if positive or red if negative
                 If yearlyChange > 0 Then
