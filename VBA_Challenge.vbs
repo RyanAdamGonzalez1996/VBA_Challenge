@@ -1,3 +1,4 @@
+Attribute VB_Name = "Module1"
 Sub SummarizeStocks()
 
 'Declare Variables
@@ -24,6 +25,12 @@ Sub SummarizeStocks()
     initialOpen = 0
     finalClose = 0
     
+'Create Header for summary chart
+    Cells(1, 9).Value = "Ticker"
+    Cells(1, 10).Value = "Yearly Change"
+    Cells(1, 11).Value = "Percent Change"
+    Cells(1, 12).Value = "Total Stock Volume"
+    
 'Go Down the First Row; Checking Tickers
     For i = 2 To maxRow
     
@@ -49,6 +56,14 @@ Sub SummarizeStocks()
                 percentChange = yearlyChange / initialOpen
                 Cells(summaryRow, 10).Value = yearlyChange
                 Cells(summaryRow, 11).Value = percentChange
+                
+            'Fill the cell for yearly change either green if positive or red if negative
+                If yearlyChange > 0 Then
+                    Cells(summaryRow, 10).Interior.ColorIndex = 4
+                Else
+                    Cells(summaryRow, 10).Interior.ColorIndex = 3
+                End If
+                
             End If
             
             'Put values into Summary Chart
