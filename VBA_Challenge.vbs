@@ -39,7 +39,7 @@ Sub SummarizeStocks()
             'Set the Max Variables
             maxStock = 0
             maxIncrease = 0
-            maxDecrese = 0
+            maxDecrese = -1
             
             'Create Header for summary chart
             Cells(1, 9).Value = "Ticker"
@@ -82,9 +82,11 @@ Sub SummarizeStocks()
                             maxIncreaseTicker = Cells(i, 1).Value
                         End If
                         'Keep track of the Lowest percentChange
-                        If percentChange < maxDecrease Then
-                            maxDecrease = percentChange
-                            maxDecreaseTicker = Cells(i, 1).Value
+                        If percentChange < 0 Then
+                            If (percentChange * -1) > (maxDecrease * -1) Then
+                                maxDecrease = percentChange
+                                maxDecreaseTicker = Cells(i, 1).Value
+                            End If
                         End If
                         
                         Cells(summaryRow, 10).Value = yearlyChange
@@ -126,8 +128,10 @@ Sub SummarizeStocks()
             'Input Max Variables
             Cells(2, 16).Value = maxIncreaseTicker
             Cells(2, 17).Value = maxIncrease
+            Cells(2, 17).NumberFormat = "0.00%"
             Cells(3, 16).Value = maxDecreaseTicker
             Cells(3, 17).Value = maxDecrease
+            Cells(3, 17).NumberFormat = "0.00%"
             Cells(4, 16).Value = maxStockTicker
             Cells(4, 17).Value = maxStock
             
