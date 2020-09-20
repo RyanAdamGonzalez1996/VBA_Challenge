@@ -11,6 +11,12 @@ Sub SummarizeStocks()
     Dim maxRow As Long
     Dim summaryRow As Integer
     Dim WS_Count As Integer
+    Dim maxStock As Double
+    Dim maxIncrease As Double
+    Dim maxDecrease As Double
+    Dim maxStockTicker As String
+    Dim maxIncreaseTicker As String
+    Dim maxDecreaseTicker As String
     
     'Get the number of worksheets for use in looping
     WS_Count = ActiveWorkbook.Worksheets.Count
@@ -24,13 +30,16 @@ Sub SummarizeStocks()
             'Get the Max Row to automaticall adjust loop for sheet size
             maxRow = ActiveSheet.UsedRange.Rows.Count
             
-        
-            
             'Set the Summary Row to start where the summary reports will begin
             summaryRow = 2
             total = 0
             initialOpen = 0
             finalClose = 0
+            
+            'Set the Max Variables
+            maxStock = 0
+            maxIncrease = 0
+            maxDecrese = 0
             
             'Create Header for summary chart
             Cells(1, 9).Value = "Ticker"
@@ -39,28 +48,45 @@ Sub SummarizeStocks()
             Cells(1, 12).Value = "Total Stock Volume"
             
             'Go Down the First Row; Checking Tickers
-            For I = 2 To maxRow
+            For i = 2 To maxRow
             
-                ticker = Cells(I, 1).Value
+                ticker = Cells(i, 1).Value
                 'Add the current stock along with the past stocks
-                total = Cells(I, 7).Value + total
-                finalClose = Cells(I, 6).Value
+                total = Cells(i, 7).Value + total
+                finalClose = Cells(i, 6).Value
                 
+                'Keep Track of the Highest Stock, whenever a new high stock is shown, update variable
+                If Cells(i, 7).Value > maxStock Then
+                    maxStock = Cells(i, 7).Value
+                    maxStockTicker = Cells(i, 1).Value
+                End If
                 'prevents the initialOpen value from being overwritten, until the varialb eis reset upon
                 'going to the next ticker
                 'if this is the first time with a new ticker, take the open value
                 If initialOpen = 0 Then
-                    initialOpen = Cells(I, 3).Value + totalOpen
+                    initialOpen = Cells(i, 3).Value + totalOpen
                 End If
                 
                     'If the next Ticker is different
-                If Cells(I, 1).Value <> Cells(I + 1, 1).Value Then
+                If Cells(i, 1).Value <> Cells(i + 1, 1).Value Then
                     
                     'Added this if to prevent the code from erroring out when dividing by 0
                     'When the code goes through the last iteration
                     If initialOpen > 0 Then
                         yearlyChange = finalClose - initialOpen
                         percentChange = yearlyChange / initialOpen
+                        
+                        'Keep Track of the Highest percentChange
+                        If percentChange > maxIncrease Then
+                            maxIncrease = percentChange
+                            maxIncreaseTicker = Cells(i, 1).Value
+                        End If
+                        'Keep track of the Lowest percentChange
+                        If percentChange < maxDecrease Then
+                            maxDecrease = percentChange
+                            maxDecreaseTicker = Cells(i, 1).Value
+                        End If
+                        
                         Cells(summaryRow, 10).Value = yearlyChange
                         Cells(summaryRow, 11).Value = percentChange
                         'Format the percent Change cells into a 0.00% setup
@@ -88,7 +114,22 @@ Sub SummarizeStocks()
                         
                 End If
                 
-            Next I
+            Next i
+            
+            'Add the Max results chart
+            Cells(2, 15).Value = "Greatest % Increase"
+            Cells(3, 15).Value = "Greatest % Decrese"
+            Cells(4, 15).Value = "Greatest total Volume"
+            Cells(1, 16).Value = "Ticker"
+            Cells(1, 17).Value = "Value"
+            
+            'Input Max Variables
+            Cells(2, 16).Value = maxIncreaseTicker
+            Cells(2, 17).Value = maxIncrease
+            Cells(3, 16).Value = maxDecreaseTicker
+            Cells(3, 17).Value = maxDecrease
+            Cells(4, 16).Value = maxStockTicker
+            Cells(4, 17).Value = maxStock
             
         End With
         
